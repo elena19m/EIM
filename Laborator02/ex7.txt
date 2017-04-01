@@ -1,0 +1,9 @@
+													onCreate()	onRestart()	onStart()	onResume()	onPause()	onStop()	onDestroy()
+1) buton Home																	3			4			1			2	
+2) buton Back																							1			2			3
+3) buton OK din aplicație							
+4) buton Home perioadă de timp mai mare								3			4			5			1			2
+5) apel telefonic													3			4			5			1			2
+a) acceptare							idem	
+b) respingere							idem
+6) rotire ecran										4							5			6			1			2			3
