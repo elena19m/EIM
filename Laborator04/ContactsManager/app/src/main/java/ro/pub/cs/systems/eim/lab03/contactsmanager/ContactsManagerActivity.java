@@ -1,5 +1,6 @@
 package ro.pub.cs.systems.eim.lab03.contactsmanager;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Parcelable;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -48,29 +50,30 @@ public class ContactsManagerActivity extends AppCompatActivity {
             } else if (v.getId() == save.getId()) {
                 Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION);
                 intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+                startActivityForResult(intent, Constants.CONTACTS_MANAGER_REQUEST_CODE);
                 if (name != null) {
-                    intent.putExtra(ContactsContract.Intents.Insert.NAME, name.toString());
+                    intent.putExtra(ContactsContract.Intents.Insert.NAME, name.getText().toString());
                 }
                 if (phone != null) {
-                    intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone.toString());
+                    intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone.getText().toString());
                 }
                 if (email != null) {
-                    intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email.toString());
+                    intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email.getText().toString());
                 }
                 if (address != null) {
-                    intent.putExtra(ContactsContract.Intents.Insert.POSTAL, address.toString());
+                    intent.putExtra(ContactsContract.Intents.Insert.POSTAL, address.getText().toString());
                 }
                 if (job != null) {
-                    intent.putExtra(ContactsContract.Intents.Insert.JOB_TITLE, job.toString());
+                    intent.putExtra(ContactsContract.Intents.Insert.JOB_TITLE, job.getText().toString());
                 }
                 if (company != null) {
-                    intent.putExtra(ContactsContract.Intents.Insert.COMPANY, company.toString());
+                    intent.putExtra(ContactsContract.Intents.Insert.COMPANY, company.getText().toString());
                 }
                 ArrayList<ContentValues> contactData = new ArrayList<ContentValues>();
                 if (website != null) {
                     ContentValues websiteRow = new ContentValues();
                     websiteRow.put(ContactsContract.Data.MIMETYPE, Website.CONTENT_ITEM_TYPE);
-                    websiteRow.put(Website.URL, String.valueOf(website));
+                    websiteRow.put(Website.URL, String.valueOf(website.getText().toString()));
                     contactData.add(websiteRow);
                 }
                 if (im != null) {
@@ -83,6 +86,7 @@ public class ContactsManagerActivity extends AppCompatActivity {
                 startActivity(intent);
             } else if (v.getId() == cancel.getId()) {
                 finish();
+                setResult(Activity.RESULT_CANCELED, new Intent());
             }
         }
     }
@@ -91,6 +95,7 @@ public class ContactsManagerActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_contacts_manager);
         show = (Button) findViewById(R.id.show_hide);
         show.setOnClickListener(l);
@@ -108,5 +113,25 @@ public class ContactsManagerActivity extends AppCompatActivity {
         company = (EditText) findViewById(R.id.company);
         website = (EditText) findViewById(R.id.website);
         im = (EditText) findViewById(R.id.im);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String phoneNumber = intent.getStringExtra("ro.pub.cs.systems.eim.lab04.contactsmanager.PHONE_NUMBER_KEY");
+            if (phone != null) {
+                phone.setText(phoneNumber);
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.phone_error), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch(requestCode) {
+            case Constants.CONTACTS_MANAGER_REQUEST_CODE:
+                setResult(resultCode, new Intent());
+                finish();
+                break;
+        }
     }
 }
