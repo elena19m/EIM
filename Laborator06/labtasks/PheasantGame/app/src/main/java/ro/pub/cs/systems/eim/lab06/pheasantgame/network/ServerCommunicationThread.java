@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 import java.util.Random;
 
 import ro.pub.cs.systems.eim.lab06.pheasantgame.general.Constants;
@@ -41,6 +42,28 @@ public class ServerCommunicationThread extends Thread {
             while (isRunning) {
 
                 // TODO exercise 7a
+                String line = requestReader.readLine();
+                if (line.equals(Constants.END_GAME)) {
+                    break;
+                }
+
+                if (Utilities.wordValidation(line)) {
+                    if (line.startsWith(expectedWordPrefix)) {
+                        String last2 = line.substring(line.length() - 2);
+                        List<String> l = Utilities.getWordListStartingWith(last2);
+
+                        if (l.isEmpty()) {
+                            responsePrintWriter.print(Constants.END_GAME);
+                        } else {
+                            responsePrintWriter.println(l.get(0));
+                            expectedWordPrefix = last2;
+                        }
+                    } else {
+                        responsePrintWriter.println(line);
+                    }
+                } else {
+                    responsePrintWriter.println(line);
+                }
 
             }
             socket.close();
